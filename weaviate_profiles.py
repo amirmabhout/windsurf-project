@@ -2,10 +2,12 @@ import weaviate
 from weaviate.classes.init import Auth
 from weaviate.classes.config import Configure
 import json
+import os
 
-# Weaviate credentials
-WEAVIATE_URL = "https://ffcysirvtmo4qyfrcd4xrq.c0.us-east1.gcp.weaviate.cloud"
-WEAVIATE_API_KEY = "REns3BJHzpWZLl2O7AHIVKqrOuWtp4x7uYMP"  # Admin API key
+# Weaviate credentials from environment variables
+WEAVIATE_URL = os.getenv("WEAVIATE_URL")
+WEAVIATE_API_KEY = os.getenv("WEAVIATE_API_KEY")  # Admin API key
+MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
 
 def connect_to_weaviate():
     """Establish connection to Weaviate."""
