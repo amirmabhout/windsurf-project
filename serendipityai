@@ -1,0 +1,63 @@
+import weaviate
+from weaviate.classes.init import Auth
+from weaviate.classes.config import Configure
+
+# Replace with your Weaviate Cloud credentials
+weaviate_url = "https://your-weaviate-url"  # Your Weaviate URL
+weaviate_key = "your-api-key"  # Your Weaviate API key
+
+# Connect to Weaviate
+client = weaviate.connect_to_weaviate_cloud(
+    cluster_url=weaviate_url,
+    auth_credentials=Auth.api_key(weaviate_key)
+)
+
+# Create a collection for storing person profiles
+def create_collection():
+    client.collections.create(
+        "PersonProfile",
+        vectorizer_config=[
+            Configure.NamedVectors.text2vec_weaviate(
+                name="description_vector",
+                source_properties=["description"]
+            )
+        ]
+    )
+    print("Collection 'PersonProfile' created.")
+
+# Insert person data into the collection
+def insert_person_data(profile_link, description, username, joined_date, hosted, attended, social_links):
+    data_object = {
+        "profile_link": profile_link,
+        "description": description,
+        "username": username,
+        "joined_date": joined_date,
+        "hosted": hosted,
+        "attended": attended,
+        "social_links": social_links
+    }
+    
+    client.data_object.create(data_object, "PersonProfile")
+    print(f"Data for {username} inserted.")
+
+# Example usage
+if __name__ == "__main__":
+    create_collection()
+    
+    # Example person data
+    profile_link = "https://lu.ma/user/itsajchan"
+    description = "Yo, let’s build epic stuff together!"
+    username = "Adam Chan @itsajchan"
+    joined_date = "August 2023"
+    hosted = 22
+    attended = 51
+    social_links = {
+        "twitter": "https://x.com/itsajchan",
+        "linkedin": "https://linkedin.com/in/itsajchan",
+        "youtube": "https://youtube.com/@itsajchan"
+    }
+
+    insert_person_data(profile_link, description, username, joined_date, hosted, attended, social_links)
+
+# Close the client connection
+client.close()
